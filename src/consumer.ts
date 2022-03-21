@@ -13,11 +13,9 @@ async function connect() {
                 return;
             }
             const input = JSON.parse(message.content.toString());
-            console.log(`Recieved job with input ${input.number}`);
-            //"7" == 7 true
-            //"7" === 7 false
+            console.log(`Recieved job with input ${input.value}`);
 
-            if (input.number == 7) channel.ack(message);
+            if (input.value === '7') channel.ack(message);
         });
 
         console.log('Waiting for messages...');
