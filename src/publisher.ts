@@ -1,6 +1,5 @@
-import { taskEither as TE } from 'fp-ts';
+import { taskEither as TE, task as T } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
-import { log } from 'fp-ts/lib/Console';
 
 import { closeChannel, closeConnection, connect, createChannel } from './utils';
 import { QUEUE_URL } from './constants';
@@ -18,8 +17,11 @@ const run = async () => {
         ),
         TE.chainFirst(({ channel }) => closeChannel(channel)),
         TE.chainFirst(({ connection }) => closeConnection(connection)),
-        TE.chainFirstIOK(() => log(`Job sent successfully ${msg.value}`)),
-    )();
+        TE.fold(
+            (e) => T.of(e.message),
+            () => T.of(`Job sent successfully ${msg.value}`),
+        ),
+    )().then(console.log);
 };
 
 run();
